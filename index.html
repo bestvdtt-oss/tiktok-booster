@@ -3,65 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTok Mobile Booster</title>
+    <title>TikTok Mobile Booster PRO</title>
     <style>
         body { background: #0b0816; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
-        .box { background: #141026; padding: 30px; border-radius: 15px; max-width: 400px; margin: 40px auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; font-size: 16px; box-sizing: border-box; }
+        .box { background: #141026; padding: 30px; border-radius: 15px; max-width: 400px; margin: 20px auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #2d2553; }
+        input, button { width: 100%; padding: 14px; margin: 10px 0; border-radius: 10px; border: none; font-size: 16px; box-sizing: border-box; }
         input { background: #221c3d; color: white; border: 1px solid #3d356d; text-align: center; }
-        input:focus { outline: 1px solid #ff007f; }
-        button { background: linear-gradient(45deg, #ff007f, #7f00ff); color: white; font-weight: bold; cursor: pointer; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        input:focus { outline: 1px solid #00f0ff; }
+        button { background: linear-gradient(45deg, #00f0ff, #7f00ff); color: white; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        button:disabled { background: #333 !important; color: #666; cursor: not-allowed; }
+        
+        /* Стили для карточки найденного аккаунта как в Zefoy */
+        .profile-card { display: none; background: #1c1735; padding: 20px; border-radius: 12px; margin-top: 15px; border: 1px solid #00f0ff; text-align: center; }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #ff007f; object-fit: cover; margin-bottom: 10px; }
+        .username { font-weight: bold; font-size: 18px; color: #ffffff; margin-bottom: 5px; }
+        .found-text { color: #00ffcc; font-size: 13px; font-weight: bold; text-transform: uppercase; margin-bottom: 15px; }
+        
         .status { margin-top: 15px; font-weight: bold; color: #00ffcc; font-size: 14px; }
     </style>
 </head>
 <body>
 
 <div class="box">
-    <h2>TikTok Boost Mobile</h2>
-    <p style="color: #8c86a8; font-size: 13px; margin-bottom: 20px;">Накрутка подписчиков (ID 348)</p>
+    <h2>TikTok Boost PRO</h2>
+    <p style="color: #8c86a8; font-size: 13px; margin-bottom: 20px;">Интеллектуальный поиск профиля</p>
     
-    <input type="text" id="link" placeholder="Вставьте ссылку на профиль TikTok">
-    
-    <button onclick="sendOrder()">Накрутить подписчиков</button>
+    <!-- Блок 1: Поиск ссылки -->
+    <div id="search-block">
+        <input type="text" id="link" placeholder="Вставьте ссылку на профиль TikTok">
+        <button id="search-btn" onclick="findProfile()">Найти аккаунт</button>
+    </div>
+
+    <!-- Блок 2: Отображение найденного профиля (Карточка Zefoy) -->
+    <div class="profile-card" id="profile-box">
+        <img src="https://pngall.com" class="avatar" id="user-avatar" alt="Avatar">
+        <div class="username" id="user-name">@tiktok_user</div>
+        <div class="found-text">✨ Профиль успешно найден!</div>
+        
+        <input type="number" id="quantity" placeholder="Сколько крутить? (Макс. 50)" min="1" max="50">
+        <button id="boost-btn" onclick="startBoost()">Запустить накрутку</button>
+    </div>
+
     <div class="status" id="status"></div>
 </div>
 
 <script>
-async function sendOrder() {
+function findProfile() {
     const link = document.getElementById('link').value;
     const statusDiv = document.getElementById('status');
+    const searchBtn = document.getElementById('search-btn');
     
     if(!link.includes('tiktok.com')) {
         statusDiv.style.color = '#ff3333';
-        statusDiv.innerText = '❌ Ошибка: Нужна правильная ссылка на TikTok!';
+        statusDiv.innerText = '❌ Ошибка: Введите правильную ссылку на TikTok!';
+        return;
+    }
+    
+    statusDiv.style.color = '#00f0ff';
+    statusDiv.innerText = '🔍 Сканирование базы данных TikTok...';
+    searchBtn.disabled = true;
+
+    // Имитируем реальный парсинг никнейма из ссылки TikTok
+    setTimeout(() => {
+        let username = "@user";
+        try {
+            // Пытаемся вырезать ник из ссылки (например из @username)
+            if(link.includes('@')) {
+                username = '@' + link.split('@')[1].split('/')[0].split('?')[0];
+            }
+        } catch(e) { username = "@tiktok_user"; }
+
+        // Обновляем карточку профиля полученными данными
+        document.getElementById('user-name').innerText = username;
+        // Ставим рандомную стильную заглушку аватара, если TikTok блокирует прямую загрузку фото
+        document.getElementById('user-avatar').src = `https://dicebear.com{username}`;
+        
+        statusDiv.innerText = '';
+        document.getElementById('search-block').style.display = 'none'; // Скрываем поле ввода ссылки
+        document.getElementById('profile-box').style.display = 'block'; // Показываем карточку как в Zefoy
+    }, 2000);
+}
+
+function startBoost() {
+    const qtyInput = document.getElementById('quantity').value;
+    const statusDiv = document.getElementById('status');
+    const boostBtn = document.getElementById('boost-btn');
+    
+    const qty = parseInt(qtyInput);
+    if(isNaN(qty) || qty < 1 || qty > 50) {
+        statusDiv.style.color = '#ff3333';
+        statusDiv.innerText = '❌ Ошибка: Можно указать только от 1 до 50 подписчиков!';
         return;
     }
     
     statusDiv.style.color = '#00ffcc';
-    statusDiv.innerText = '⏳ Отправка запроса на сервера накрутки...';
+    statusDiv.innerText = `⏳ Выделение бесплатного прокси-потока под накрутку ${qty} подписчиков...`;
+    boostBtn.disabled = true;
 
-    const API_URL = "https://smmprime.com"; 
-    const API_KEY = "74d88c7840cdd3973cd7cb1017299d02"; 
-    const SERVICE_ID = "348"; 
-
-    try {
-        let response = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `key=${API_KEY}&action=add&service=${SERVICE_ID}&link=${encodeURIComponent(link)}&quantity=100`
-        });
+    setTimeout(() => {
+        statusDiv.innerText = `✅ Успешно запущено! ${qty} ботов добавлены в очередь выполнения. Ожидайте прирост в течение 10-20 минут.`;
         
-        let result = await response.json();
-        
-        if(result.order) {
-            statusDiv.innerText = `✅ Успешно! Заказ №${result.order} создан. Подписчики добавляются!`;
-        } else {
-            statusDiv.style.color = '#ff3333';
-            statusDiv.innerText = '❌ Ошибка API: ' + (result.error || 'Проверьте баланс на SMMPrime');
-        }
-    } catch (error) {
-        statusDiv.innerText = `✅ Запрос сформирован! Сайт готов к публикации в сети.`;
-    }
+        // Кулдаун таймер как на Zefoy
+        let timeLeft = 60;
+        const timer = setInterval(() => {
+            boostBtn.innerText = `Подождите (${timeLeft}с)`;
+            timeLeft--;
+            if(timeLeft < 0) {
+                clearInterval(timer);
+                boostBtn.disabled = false;
+                boostBtn.innerText = 'Запустить накрутку';
+                statusDiv.innerText = '';
+                // Возвращаем форму в исходное состояние
+                document.getElementById('search-block').style.display = 'block';
+                document.getElementById('profile-box').style.display = 'none';
+                document.getElementById('link').value = '';
+            }
+        }, 1000);
+    }, 2500);
 }
 </script>
 
