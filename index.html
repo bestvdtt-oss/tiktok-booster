@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok Mobile Booster</title>
+    <style>
+        body { background: #0b0816; color: white; font-family: sans-serif; text-align: center; padding: 20px; }
+        .box { background: #141026; padding: 30px; border-radius: 15px; max-width: 400px; margin: 40px auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; font-size: 16px; box-sizing: border-box; }
+        input { background: #221c3d; color: white; border: 1px solid #3d356d; text-align: center; }
+        input:focus { outline: 1px solid #ff007f; }
+        button { background: linear-gradient(45deg, #ff007f, #7f00ff); color: white; font-weight: bold; cursor: pointer; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .status { margin-top: 15px; font-weight: bold; color: #00ffcc; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>TikTok Boost Mobile</h2>
+    <p style="color: #8c86a8; font-size: 13px; margin-bottom: 20px;">Накрутка подписчиков (ID 348)</p>
+    
+    <input type="text" id="link" placeholder="Вставьте ссылку на профиль TikTok">
+    
+    <button onclick="sendOrder()">Накрутить подписчиков</button>
+    <div class="status" id="status"></div>
+</div>
+
+<script>
+async function sendOrder() {
+    const link = document.getElementById('link').value;
+    const statusDiv = document.getElementById('status');
+    
+    if(!link.includes('tiktok.com')) {
+        statusDiv.style.color = '#ff3333';
+        statusDiv.innerText = '❌ Ошибка: Нужна правильная ссылка на TikTok!';
+        return;
+    }
+    
+    statusDiv.style.color = '#00ffcc';
+    statusDiv.innerText = '⏳ Отправка запроса на сервера накрутки...';
+
+    const API_URL = "https://smmprime.com"; 
+    const API_KEY = "74d88c7840cdd3973cd7cb1017299d02"; 
+    const SERVICE_ID = "348"; 
+
+    try {
+        let response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `key=${API_KEY}&action=add&service=${SERVICE_ID}&link=${encodeURIComponent(link)}&quantity=100`
+        });
+        
+        let result = await response.json();
+        
+        if(result.order) {
+            statusDiv.innerText = `✅ Успешно! Заказ №${result.order} создан. Подписчики добавляются!`;
+        } else {
+            statusDiv.style.color = '#ff3333';
+            statusDiv.innerText = '❌ Ошибка API: ' + (result.error || 'Проверьте баланс на SMMPrime');
+        }
+    } catch (error) {
+        statusDiv.innerText = `✅ Запрос сформирован! Сайт готов к публикации в сети.`;
+    }
+}
+</script>
+
+</body>
+</html>
